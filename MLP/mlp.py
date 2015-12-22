@@ -81,15 +81,7 @@ if __name__=="__main__":
         w.append(0)
     # train model for max 100 Iteration
     trainMLP(100)
-    '''
-    x = np.linspace(-1,5,10)
-    print x
-    plt.figure()
-    for i in range(len(trainSet)):
-        plt.scatter(trainSet[i][0][0],trainSet[i][0][1],c=u'b')
-    plt.plot(x,-(w[0]*x-b)/w[1],c=u'r')
-    plt.show()
-    '''
+
     
 
         
