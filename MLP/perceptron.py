@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Dec 20 12:57:00 2015
-
-@author: Liu_Longpo
+    @Description : perceptron by python
+    @Author: Liu_Longpo
+    @Time: Sun Dec 20 12:57:00 2015
 """
 
-import sys
 import matplotlib.pyplot as plt
 import numpy as np
+import time
 
 trainSet = []
 w = []
 b = 0
 lens = 0
 alpha = 0  # learn rate , default 1
+trainLoss = []
     
-
 def updateParm(sample):
     global w,b,lens,alpha
     for i in range(lens):
@@ -46,42 +46,64 @@ def trainMLP(Iter):
                 update = True
                 updateParm(sample)
         print 'train loss:',train_loss
+        trainLoss.append(train_loss)
         if update:
             epoch = epoch+1
         else:
             print "The training have convergenced,stop trianing "
             print "Optimum W:",w," Optimum b:",b
             #os._exit(0)
-            break
+            break # early stop
         update = False
         
-        
 if __name__=="__main__":
-    
     if len(sys.argv)!=4:
         print "Usage: python MLP.py trainFile modelFile"
         exit(0)
     alpha = float(sys.argv[1])
     trainFile = open(sys.argv[2])
     modelPath = sys.argv[3]
+    #modelPath = 'model'
     lens = 0
+    # load data  trainSet[i][0]:data,trainSet[i][1]:label
     for line in trainFile:
-        data = line.strip().split(' ')
+        data = line.strip().split(' ') # train ' ' ,testSet '/t'
         lens = len(data) - 1
         sample_all = []
         sample_data = []
         for i in range(0,lens):
             sample_data.append(float(data[i]))
         sample_all.append(sample_data) # add data
-        sample_all.append(int(data[lens])) # add label
+        if int(data[lens]) == 1:
+            sample_all.append(int(data[lens])) # add label
+        else:
+            sample_all.append(-1) # add label
         trainSet.append(sample_all)
     trainFile.close()
     # initialize w by 0 
     for i in range(lens):
         w.append(0)
     # train model for max 100 Iteration
-    trainMLP(100)
-
+    start = time.clock()
+    trainMLP(500)
+    end = time.clock()
+    print 'train time is %f s.' % (end - start)
+    x = np.linspace(-5,5,10)
+    plt.figure()
+    for i in range(len(trainSet)):
+        if trainSet[i][1] == 1:
+            plt.scatter(trainSet[i][0][0],trainSet[i][0][1],c=u'b')
+        else:
+            plt.scatter(trainSet[i][0][0],trainSet[i][0][1],c=u'r')
+    plt.plot(x,-(w[0]*x+b)/w[1],c=u'r')
+    plt.show()
+    trainIter = range(len(trainLoss))
+    plt.figure()    
+    plt.scatter(trainIter,trainLoss,c=u'r')
+    plt.plot(trainIter,trainLoss)
+    plt.xlabel('Epoch')
+    plt.ylabel('trainLoss')
+    plt.show()
     
 
         
